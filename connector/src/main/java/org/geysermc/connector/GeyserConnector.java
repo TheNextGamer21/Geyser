@@ -39,6 +39,7 @@ import org.geysermc.connector.common.AuthType;
 import org.geysermc.connector.configuration.GeyserConfiguration;
 import org.geysermc.connector.metrics.Metrics;
 import org.geysermc.connector.network.ConnectorServerEventHandler;
+import org.geysermc.connector.network.addon.AddonListenerRegistry;
 import org.geysermc.connector.network.remote.RemoteServer;
 import org.geysermc.connector.network.session.GeyserSession;
 import org.geysermc.connector.network.translators.BiomeTranslator;
@@ -141,6 +142,7 @@ public class GeyserConnector {
         RecipeRegistry.init();
         SoundRegistry.init();
         SoundHandlerRegistry.init();
+        AddonListenerRegistry.init();
 
         ResourcePack.loadPacks();
 

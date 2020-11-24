@@ -32,6 +32,7 @@ import com.nukkitx.protocol.bedrock.packet.*;
 import org.geysermc.connector.GeyserConnector;
 import org.geysermc.connector.common.AuthType;
 import org.geysermc.connector.configuration.GeyserConfiguration;
+import org.geysermc.connector.network.addon.FormAddonListener;
 import org.geysermc.connector.network.session.GeyserSession;
 import org.geysermc.connector.network.translators.PacketTranslatorRegistry;
 import org.geysermc.connector.utils.LanguageUtils;
@@ -142,6 +143,9 @@ public class UpstreamPacketHandler extends LoggingPacketHandler {
 
     @Override
     public boolean handle(ModalFormResponsePacket packet) {
+        if (packet.getFormId() == LoginEncryptionUtils.AUTH_FORM_ID || packet.getFormId() == LoginEncryptionUtils.AUTH_DETAILS_FORM_ID) {
+            return LoginEncryptionUtils.authenticateFromForm(session, connector, packet.getFormId(), packet.getFormData());
+        }
         if (packet.getFormId() == SettingsUtils.SETTINGS_FORM_ID) {
             return SettingsUtils.handleSettingsForm(session, packet.getFormData());
         } else if (packet.getFormId() == StatisticsUtils.STATISTICS_MENU_FORM_ID) {
@@ -149,8 +153,8 @@ public class UpstreamPacketHandler extends LoggingPacketHandler {
         } else if (packet.getFormId() == StatisticsUtils.STATISTICS_LIST_FORM_ID) {
             return StatisticsUtils.handleListForm(session, packet.getFormData());
         }
-
-        return LoginEncryptionUtils.authenticateFromForm(session, connector, packet.getFormId(), packet.getFormData());
+        FormAddonListener.get().handleResponse(this.session, packet);
+        return true;
     }
 
     private boolean couldLoginUserByName(String bedrockUsername) {
